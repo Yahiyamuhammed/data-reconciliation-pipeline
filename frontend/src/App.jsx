@@ -1,122 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import { fetchReconciliationReport } from './api/reconciliation.api.js';
+import DashboardSummary from './components/DashboardSummary.jsx';
+import OrderTable from './components/OrderTable.jsx';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Concrete realistic mock parameters mirroring your data structure requirements
+const mockShopify = [
+  { orderId: "1001", revenue: 100 },
+  { orderId: "1002", revenue: 250 },
+  { orderId: "1003", revenue: 400 }
+];
+
+const mockMeta = [
+  { orderId: "1001", attributedRevenue: 120 },
+  { orderId: "1002", attributedRevenue: 250 },
+  { orderId: "1003", attributedRevenue: 550 }
+];
+
+const mockErp = [
+  { orderId: "1001", revenue: 100 },
+  { orderId: "1002", revenue: 240 }, // Mismatch example where ERP drops from Shopify drift
+  { orderId: "1003", revenue: 400 }
+];
+
+export default function App() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleRunReconciliation = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = { shopify: mockShopify, meta: mockMeta, erp: mockErp };
+      const report = await fetchReconciliationReport(payload);
+      setData(report);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <header style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
+        <h1 style={{ margin: 0 }}>Mini-Menza Data Engine</h1>
+        <p style={{ color: '#666' }}>Automated programmatic validation engine across ad channels, store tracking, and financial ledgers.</p>
+      </header>
 
-      <div className="ticks"></div>
+      <button 
+        onClick={handleRunReconciliation} 
+        disabled={loading}
+        style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', marginBottom: '2rem' }}
+      >
+        {loading ? 'Processing Ledger Ingestion...' : 'Execute Ingestion Pipelines'}
+      </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {error && <div style={{ color: 'red', padding: '1rem', background: '#ffeeee', marginBottom: '2rem' }}>{error}</div>}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {data && (
+        <>
+          <DashboardSummary summary={data.summary} insight={data.aiInsight} />
+          <OrderTable orders={data.orders} />
+        </>
+      )}
+    </div>
+  );
 }
-
-export default App
