@@ -12,12 +12,10 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Raw file pointers from input fields
   const [shopifyFile, setShopifyFile] = useState(null);
   const [metaFile, setMetaFile] = useState(null);
   const [erpFile, setErpFile] = useState(null);
 
-  // Execution Path 1: Hardcoded Demo Data (Frontend JSON Payload)
   const handleRunDemo = async () => {
     setLoading(true);
     setError(null);
@@ -31,17 +29,15 @@ export default function App() {
     }
   };
 
-  // Execution Path 2: Upload Files (Backend Parsing Path)
   const handleRunUpload = async () => {
     if (!shopifyFile || !metaFile || !erpFile) {
-      setError("Please select all three files before submitting to the server.");
+      setError("Incomplete configurations. Please ensure all three data arrays are mounted before pipeline execution.");
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    // Construct multipart form payload
     const formData = new FormData();
     formData.append('shopify', shopifyFile);
     formData.append('meta', metaFile);
@@ -57,60 +53,90 @@ export default function App() {
     }
   };
 
-  const fileInputStyle = { display: 'block', margin: '0.5rem 0', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%', maxWidth: '300px' };
+  // Styled components mimicking modern minimalist design tokens
+  const cardStyle = { flex: 1, minWidth: '320px', padding: '1.75rem', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)' };
+  const labelStyle = { display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' };
+  const inputStyle = { display: 'block', width: '100%', boxSizing: 'border-box', padding: '0.5rem 0.75rem', fontSize: '0.85rem', color: '#334155', border: '1px solid #CBD5E1', borderRadius: '8px', marginBottom: '1.25rem', backgroundColor: '#F8FAFC' };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <header style={{ marginBottom: '2rem', borderBottom: '2px solid #333', paddingBottom: '1rem' }}>
-        <h1 style={{ margin: 0 }}>Mini-Menza Data Engine</h1>
-        <p style={{ color: '#666' }}>Automated programmatic validation engine across ad channels, store tracking, and financial ledgers.</p>
-      </header>
+    <div style={{ minHeight: '100vh', backgroundColor: '#FAFAFA', padding: '3rem 1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {/* App Global Header */}
+        <header style={{ marginBottom: '3rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '1.5rem' }}>
+          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.03em' }}>
+            Mini-Menza Engine
+          </h1>
+          <p style={{ margin: '0.5rem 0 0 0', color: '#64748B', fontSize: '0.95rem', lineHeight: '1.5' }}>
+            Multi-directional data verification system mapping storefront transactions, ad network attribution, and balance sheets.
+          </p>
+        </header>
 
-      <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        {/* File Ingestion Section */}
-        <div style={{ flex: 1, minWidth: '300px', padding: '1.5rem', background: '#f5f7fa', border: '1px solid #e1e4e8', borderRadius: '8px' }}>
-          <h3 style={{ marginTop: 0 }}>Option A: Upload Data Files to Backend</h3>
+        {/* Dynamic Dual Module Panels */}
+        <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
           
-          <label style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Shopify Orders (JSON File)</label>
-          <input type="file" accept=".json" onChange={(e) => setShopifyFile(e.target.files[0])} style={fileInputStyle} />
-          
-          <label style={{ fontWeight: 'bold', fontSize: '0.9rem', marginTop: '1rem' }}>Meta Ads (JSON File)</label>
-          <input type="file" accept=".json" onChange={(e) => setMetaFile(e.target.files[0])} style={fileInputStyle} />
-          
-          <label style={{ fontWeight: 'bold', fontSize: '0.9rem', marginTop: '1rem' }}>ERP Ledger (JSON File)</label>
-          <input type="file" accept=".json" onChange={(e) => setErpFile(e.target.files[0])} style={fileInputStyle} />
+          {/* Module 1: System Upload */}
+          <div style={cardStyle}>
+            <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.1rem', fontWeight: 600, color: '#0F172A' }}>
+              Production File Ingestion
+            </h3>
+            
+            <label style={labelStyle}>Shopify Ledger (.json)</label>
+            <input type="file" accept=".json" onChange={(e) => setShopifyFile(e.target.files[0])} style={inputStyle} />
+            
+            <label style={labelStyle}>Meta Ad Networks (.json)</label>
+            <input type="file" accept=".json" onChange={(e) => setMetaFile(e.target.files[0])} style={inputStyle} />
+            
+            <label style={labelStyle}>ERP Balance Reconciliation (.json)</label>
+            <input type="file" accept=".json" onChange={(e) => setErpFile(e.target.files[0])} style={inputStyle} />
 
-          <button 
-            onClick={handleRunUpload} 
-            disabled={loading}
-            style={{ marginTop: '1.5rem', padding: '0.75rem 1.5rem', fontSize: '1rem', background: '#0275d8', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%' }}
-          >
-            {loading ? 'Server Uploading & Ingesting...' : 'Stream Files to Server'}
-          </button>
+            <button 
+              onClick={handleRunUpload} 
+              disabled={loading}
+              style={{ width: '100%', padding: '0.75rem', fontSize: '0.9rem', fontWeight: 500, background: '#0F172A', color: '#FFFFFF', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'opacity 0.15s ease', opacity: loading ? 0.6 : 1 }}
+            >
+              {loading ? 'Streaming Ingestion Channels...' : 'Execute Batch Upload'}
+            </button>
+          </div>
+
+          {/* Module 2: Automated Sandbox */}
+          <div style={{ ...cardStyle, background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', fontWeight: 600, color: '#0F172A' }}>
+                Sandbox Environment
+              </h3>
+              <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Instantly parse static memory configurations mimicking classic marketing attribution data inflation anomalies. Use this to demonstrate system pipelines without uploading external data structures.
+              </p>
+            </div>
+            <button 
+              onClick={handleRunDemo} 
+              disabled={loading}
+              style={{ width: '100%', marginTop: '2rem', padding: '0.75rem', fontSize: '0.9rem', fontWeight: 500, background: 'transparent', color: '#0F172A', border: '1px solid #0F172A', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(15,23,42,0.04)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+            >
+              {loading ? 'Processing Sandbox Matrix...' : 'Run Simulated Pipeline'}
+            </button>
+          </div>
+
         </div>
 
-        {/* Demo Fallback Section */}
-        <div style={{ flex: 1, minWidth: '300px', padding: '1.5rem', background: '#fff', border: '1px solid #e1e4e8', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-          <h3 style={{ marginTop: 0 }}>Option B: Sandbox Environment</h3>
-          <p style={{ color: '#666', marginBottom: '2rem' }}>Test pipeline performance instantly using pre-configured database mocks.</p>
-          <button 
-            onClick={handleRunDemo} 
-            disabled={loading}
-            style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%', maxWidth: '300px' }}
-          >
-            {loading ? 'Processing Sandbox...' : 'Run Demo Pipeline'}
-          </button>
-        </div>
+        {/* Global Error Banner */}
+        {error && (
+          <div style={{ color: '#DF1C1C', padding: '1rem 1.25rem', background: '#FEF2F2', border: '1px solid #FEE2E2', borderRadius: '8px', marginBottom: '3rem', fontSize: '0.9rem', fontWeight: 500 }}>
+            {error}
+          </div>
+        )}
+
+        {/* Data Output Matrix */}
+        {data && (
+          <div style={{ animation: 'fadeIn 0.4s ease' }}>
+            <DashboardSummary summary={data.summary} insight={data.aiInsight} />
+            <OrderTable orders={data.orders} />
+          </div>
+        )}
       </div>
-
-      {error && <div style={{ color: 'red', padding: '1rem', background: '#ffeeee', marginBottom: '2rem', borderRadius: '4px', border: '1px solid #ffcccc' }}>{error}</div>}
-
-      {data && (
-        <>
-          <DashboardSummary summary={data.summary} insight={data.aiInsight} />
-          <OrderTable orders={data.orders} />
-        </>
-      )}
     </div>
   );
 }
